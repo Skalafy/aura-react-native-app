@@ -6,12 +6,12 @@ import { images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { createUser } from "../../lib/appwrite";
-
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 
 const SignUp = () => {
  
-
+  const {setUser,setIsLogged}=useGlobalContext()
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     username: "",
@@ -27,8 +27,8 @@ const SignUp = () => {
     setSubmitting(true);
     try {
       const result = await createUser(form.email, form.password, form.username);
-      // setUser(result);
-      // setIsLogged(true);
+      setUser(result);
+      setIsLogged(true);
 
       router.replace("/home");
     } catch (error) {

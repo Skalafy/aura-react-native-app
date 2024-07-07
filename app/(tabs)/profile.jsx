@@ -1,23 +1,27 @@
 import { View, Text, FlatList,Image,StatusBar, RefreshControl,TouchableOpacity} from 'react-native'
-import {React,useEffect,useState} from 'react'
+import {React} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { images } from "../../constants";
-import SearchInput from '../../components/SearchInput';
-import Trending from '../../components/Trending';
 import EmptyState from '../../components/EmptyState';
-import {getAllPosts, getLatestPosts, getUserPosts} from '../../lib/appwrite'
+import { getUserPosts} from '../../lib/appwrite'
 import useAppWrite from '../../lib/useAppwrite';
 import VideoCard from '../../components/VideoCard';
-import { useLocalSearchParams } from 'expo-router';
-import { searchPosts } from '../../lib/appwrite';
+import { router } from 'expo-router';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import {icons} from '../../constants';
+import { signOut } from '../../lib/appwrite';
+import InfoBox from '../../components/InfoBox';
 
 const Profile = () => {
-  const {user,setUser,setIsLoggedIn}=useGlobalContext();
+  const {user,setUser,setIsLogged}=useGlobalContext();
+
   const { data: posts } = useAppWrite(() => getUserPosts(user.$id));
   
- const logout=()=>{
+ const logout=async()=>{
+  await signOut();
+  router.replace("/sign-in");
+
+    setUser(null);       
+    setIsLogged(false);    
 
  }
 
@@ -57,14 +61,14 @@ const Profile = () => {
               />
             </View>
 
-            {/* <InfoBox
+            <InfoBox
               title={user?.username}
               containerStyles="mt-5"
               titleStyles="text-lg"
-            /> */}
+            />
 
             <View className="mt-5 flex flex-row">
-              {/* <InfoBox
+              <InfoBox
                 title={posts.length || 0}
                 subtitle="Posts"
                 titleStyles="text-xl"
@@ -74,7 +78,7 @@ const Profile = () => {
                 title="1.2k"
                 subtitle="Followers"
                 titleStyles="text-xl"
-              /> */}
+              />
             </View>
           </View>
         )}
